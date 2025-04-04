@@ -1,0 +1,55 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Healthedly CRM API Automation Suite" verbose="1" parallel="classes" thread-count="4">
+
+    <listeners>
+        <!-- Allure listener -->
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <test name="All API Tests" preserve-order="true">
+        <packages>
+            <package name="services.reqres"/>
+            <package name="services.dummyjson"/>
+            <package name="services.twilio"/>
+        </packages>
+    </test>
+
+    <!-- Group: ReqRes -->
+<!--    <test name="ReqRes API Tests" preserve-order="true">-->
+<!--        <groups>-->
+<!--            <run>-->
+<!--                <include name="sanity"/>-->
+<!--                <include name="regression"/>-->
+<!--            </run>-->
+<!--        </groups>-->
+<!--        <packages>-->
+<!--            <package name="services.reqres"/>-->
+<!--        </packages>-->
+<!--    </test>-->
+
+    <!-- Group: DummyJSON -->
+<!--    <test name="DummyJSON API Tests" preserve-order="true">-->
+<!--        <groups>-->
+<!--            <run>-->
+<!--                <include name="sanity"/>-->
+<!--                <include name="regression"/>-->
+<!--            </run>-->
+<!--        </groups>-->
+<!--        <packages>-->
+<!--            <package name="services.dummyjson"/>-->
+<!--        </packages>-->
+<!--    </test>-->
+
+    <!-- Group: Twilio -->
+<!--    <test name="Twilio Integration Tests" preserve-order="true">-->
+<!--        <groups>-->
+<!--            <run>-->
+<!--                <include name="integration"/>-->
+<!--            </run>-->
+<!--        </groups>-->
+<!--        <packages>-->
+<!--            <package name="services.twilio"/>-->
+<!--        </packages>-->
+<!--    </test>-->
+
+</suite>
