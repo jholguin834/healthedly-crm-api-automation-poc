@@ -1,0 +1,33 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing tools..."
+      - apt-get update && apt-get install -y jq curl bc
+      - echo "Installing Maven..."
+      - mvn -version
+  pre_build:
+    commands:
+      - echo "Pre-build phase"
+  build:
+    commands:
+      - echo "Running Maven tests..."
+      - mvn clean test
+      - echo "Generating Allure report..."
+      - mvn allure:report
+  post_build:
+    commands:
+      - echo "Sending Slack notification..."
+      - |
+        PASSED=$(jq '.statistic.passed' target/allure-report/widgets/summary.json)
+        FAILED=$(jq '.statistic.failed' target/allure-report/widgets/summary.json)
+        TOTAL=$(jq '.statistic.total' target/allure-report/widgets/summary.json)
+        curl -X POST -H 'Content-type: application/json' \
+        --data "{\"text\":\"Test Summary: :white_check_mark: Passed: $PASSED, :x: Failed: $FAILED, Total: $TOTAL\"}" $SLACK_WEBHOOK_URL
+
+artifacts:
+  files:
+    - target/allure-report/**
