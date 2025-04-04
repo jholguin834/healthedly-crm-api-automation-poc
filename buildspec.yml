@@ -7,27 +7,50 @@ phases:
     commands:
       - echo "Installing tools..."
       - apt-get update && apt-get install -y jq curl bc
-      - echo "Installing Maven..."
       - mvn -version
+      - java -version
+
   pre_build:
     commands:
       - echo "Pre-build phase"
+
   build:
     commands:
       - echo "Running Maven tests..."
-      - mvn clean test
-      - echo "Generating Allure report..."
-      - mvn allure:report
+      - mvn clean test || true
+
   post_build:
     commands:
+      - echo "Generating Allure report..."
+      - mvn allure:report || true
+
       - echo "Sending Slack notification..."
       - |
-        PASSED=$(jq '.statistic.passed' target/allure-report/widgets/summary.json)
-        FAILED=$(jq '.statistic.failed' target/allure-report/widgets/summary.json)
-        TOTAL=$(jq '.statistic.total' target/allure-report/widgets/summary.json)
+        SUMMARY_FILE="target/site/allure-maven-plugin/widgets/summary.json"
+        if [ -f $SUMMARY_FILE ]; then
+          FAILED=$(jq '.statistic.failed' $SUMMARY_FILE)
+          BROKEN=$(jq '.statistic.broken' $SUMMARY_FILE)
+          SKIPPED=$(jq '.statistic.skipped' $SUMMARY_FILE)
+          PASSED=$(jq '.statistic.passed' $SUMMARY_FILE)
+          UNKNOWN=$(jq '.statistic.unknown' $SUMMARY_FILE)
+          TOTAL=$(jq '.statistic.total' $SUMMARY_FILE)
+          START_TIME=$(jq '.time.start' $SUMMARY_FILE)
+          STOP_TIME=$(jq '.time.stop' $SUMMARY_FILE)
+          DURATION_MS=$(jq '.time.duration' $SUMMARY_FILE)
+          DURATION_MIN=$(echo "scale=2; $DURATION_MS / 60000" | bc)
+          START_TIME_HUMAN=$(date -d @$((START_TIME / 1000)) +"%Y-%m-%d %H:%M:%S")
+          STOP_TIME_HUMAN=$(date -d @$((STOP_TIME / 1000)) +"%Y-%m-%d %H:%M:%S")
+        
+          MESSAGE="*Test Summary*\\n:white_check_mark: Passed: $PASSED\\n:x: Failed: $FAILED\\n:warning: Broken: $BROKEN\\n:arrow_double_down: Skipped: $SKIPPED\\n:grey_question: Unknown: $UNKNOWN\\n🧮 Total: $TOTAL\\n⏱ Start: $START_TIME_HUMAN\\n⏱ End: $STOP_TIME_HUMAN\\n🕒 Duration: ${DURATION_MIN} min"
+        
         curl -X POST -H 'Content-type: application/json' \
-        --data "{\"text\":\"Test Summary: :white_check_mark: Passed: $PASSED, :x: Failed: $FAILED, Total: $TOTAL\"}" $SLACK_WEBHOOK_URL
+            --data "{\"text\":\"$MESSAGE\"}" $SLACK_WEBHOOK_URL
+        else
+          echo "Allure summary.json not found. Skipping Slack notification."
+        fi
 
 artifacts:
   files:
     - target/allure-report/**
+    - target/kotest-reports/merged-results.xml
+    - target/surefire-reports/**
