@@ -6,7 +6,7 @@ import utils.TwilioUtils;
 public class TwilioTest {
 
     @Test(groups = {"integration"})
-    public void simulateVoiceCall() {
+    public void simulateVoiceCall_SCRUM_T13() {
         TwilioUtils.makeTestCall();
     }
 }

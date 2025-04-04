@@ -8,7 +8,7 @@ import static org.testng.Assert.*;
 public class UserApiTest {
 
     @Test
-    public void shouldLoginSuccessfully() {
+    public void shouldLoginSuccessfully_SCRUM_T3() {
         var payload = """
         {
           "username": "kminchelle",
@@ -29,7 +29,7 @@ public class UserApiTest {
     }
 
     @Test
-    public void shouldGetUsersWithPagination() {
+    public void shouldGetUsersWithPagination_SCRUM_T4() {
         var response = RestAssured.given()
                 .baseUri("https://dummyjson.com")
                 .basePath("/users")

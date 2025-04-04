@@ -28,7 +28,7 @@ public class LoginTest {
 //    }
 
     @Test(groups = {"sanity"})
-    public void shouldLoginWithValidCredentials() {
+    public void shouldLoginWithValidCredentials_SCRUM_T5() {
         String payload = """
       {
         "email": "eve.holt@reqres.in",

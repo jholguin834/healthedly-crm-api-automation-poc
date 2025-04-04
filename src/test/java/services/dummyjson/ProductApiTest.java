@@ -8,7 +8,7 @@ import static org.testng.Assert.*;
 public class ProductApiTest {
 
     @Test
-    public void shouldSearchProductsByKeyword() {
+    public void shouldSearchProductsByKeyword_SCRUM_T1() {
         var response = RestAssured.given()
                 .baseUri("https://dummyjson.com")
                 .basePath("/products/search")
@@ -21,7 +21,7 @@ public class ProductApiTest {
     }
 
     @Test
-    public void shouldGetProductDetails() {
+    public void shouldGetProductDetails_SCRUM_T2() {
         var response = RestAssured.given()
                 .baseUri("https://dummyjson.com")
                 .basePath("/products/1")

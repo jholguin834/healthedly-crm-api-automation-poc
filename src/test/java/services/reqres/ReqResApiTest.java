@@ -8,7 +8,7 @@ import static org.testng.Assert.*;
 public class ReqResApiTest {
 
     @Test(groups = {"regression"})
-    public void shouldGetSingleUser() {
+    public void shouldGetSingleUser_SCRUM_T6() {
         var response = RestAssured.given()
                 .baseUri("https://reqres.in")
                 .basePath("/api/users/2")
@@ -20,7 +20,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldGetPaginatedUsers() {
+    public void shouldGetPaginatedUsers_SCRUM_T7() {
         var response = RestAssured.given()
                 .baseUri("https://reqres.in")
                 .basePath("/api/users")
@@ -33,7 +33,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldCreateUser() {
+    public void shouldCreateUser_SCRUM_T8() {
         String payload = """
         {
           "name": "Andrés",
@@ -55,7 +55,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldUpdateUser() {
+    public void shouldUpdateUser_SCRUM_T9() {
         String payload = """
         {
           "name": "Andrés",
@@ -75,7 +75,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldDeleteUser() {
+    public void shouldDeleteUser_SCRUM_T10() {
         var response = RestAssured.given()
                 .baseUri("https://reqres.in")
                 .basePath("/api/users/2")
@@ -85,7 +85,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldReturn404ForNonExistingResource() {
+    public void shouldReturn404ForNonExistingResource_SCRUM_T11() {
         var response = RestAssured.given()
                 .baseUri("https://reqres.in")
                 .basePath("/api/unknown/23")
@@ -95,7 +95,7 @@ public class ReqResApiTest {
     }
 
     @Test
-    public void shouldGetDelayedResponse() {
+    public void shouldGetDelayedResponse_SCRUM_T12() {
         var start = System.currentTimeMillis();
 
         var response = RestAssured.given()

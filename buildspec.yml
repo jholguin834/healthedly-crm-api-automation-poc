@@ -49,7 +49,46 @@ phases:
           echo "Allure summary.json not found. Skipping Slack notification."
         fi
 
+      - echo "Sending Zephyr report..."
+      - CURRENT_DATE=$(date +"%Y/%m/%d")
+      - |
+        echo "Fetching current Jira Sprint..."
+        SPRINT_VALUE=$(curl -u $JIRA_USER:$JIRA_TOKEN -X GET \
+          -H "Content-Type: application/json" \
+          "https://aholguin.atlassian.net/rest/agile/1.0/board/1/sprint?state=active" | jq -r '.values[0].name')
+
+        echo "Current Sprint: $SPRINT_VALUE"
+
+        echo "{
+          \"name\": \"Healthedly CRM - $SPRINT_VALUE - API Demo Tests - $CURRENT_DATE\",
+          \"description\": \"Healthedly CRM API Automated Tests\",
+          \"jiraProjectVersion\": 10000,
+          \"folderId\": 21640948
+        }" > test_cycle_zephyr.json
+
+      - XML_FILE="target/surefire-reports/TEST-TestSuite.xml"
+      - |
+        if [ -f "$XML_FILE" ]; then
+          echo "Sending XML file to Zephyr..."
+          curl -X POST \
+            -H "Authorization: Bearer $ZEPHYR_TOKEN" \
+            -H "Content-Type: multipart/form-data" \
+            -F "file=@${XML_FILE};type=application/xml" \
+            -F "testCycle=@test_cycle_zephyr.json;type=application/json" \
+            "https://api.zephyrscale.smartbear.com/v2/automations/executions/junit?projectKey=SCRUM&autoCreateTestCases=false"
+        else
+          echo "XML file for Zephyr not found."
+        fi
+
 artifacts:
+  secondary-artifacts:
+    allureReport:
+      base-directory: target/site/allure-maven-plugin
+      files:
+        - '**/*'
+    junitResults:
+      base-directory: target/surefire-reports
+      files:
+        - '**/*'
   files:
-    - target/site/allure-maven-plugin/**
-    - target/surefire-reports/**
+    - test_cycle_zephyr.json
