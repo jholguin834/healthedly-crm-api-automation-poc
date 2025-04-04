@@ -51,6 +51,5 @@ phases:
 
 artifacts:
   files:
-    - target/allure-report/**
-    - target/kotest-reports/merged-results.xml
+    - target/site/allure-maven-plugin/**
     - target/surefire-reports/**
